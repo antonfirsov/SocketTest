@@ -56,6 +56,23 @@ public class ConnectTests
 {
     const int Port = 5000;
 
+    [Theory]
+    [InlineData("V4_SLOW")]
+    [InlineData("V6_SLOW")]
+    public async Task ConnectAsync_IPEndPoint_Cancellable(string ipName)
+    {
+        IPAddress address = IPAddress.Parse(Environment.GetEnvironmentVariable(ipName));
+        using Socket socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        CancellationTokenSource cts = new CancellationTokenSource();
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        Task connectTask = socket.ConnectAsync(new IPEndPoint(address, Port), cts.Token).AsTask();
+        cts.CancelAfter(50);
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await connectTask);
+        stopwatch.Stop();
+        Console.WriteLine($"ConnectAsync with {ipName} cancelled after {stopwatch.ElapsedMilliseconds} ms");
+        Assert.True(stopwatch.ElapsedMilliseconds < 100, "Connect should complete quickly after cancellation");
+    }
+
     [Fact]
     public async Task BasicConnect()
     {

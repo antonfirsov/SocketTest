@@ -11,77 +11,81 @@ services:
     networks:
       - sockettest-network
     depends_on:
-      - testserver1
-      - testserver2
-      - testserver3
-      - testserver4
+      - server-v4-fast
+      - server-v4-slow
+      - server-v6-fast
+      - server-v6-slow
     environment:
       - HOST_A=${HOST_A}
       - HOST_B=${HOST_B}
+      - V4_FAST=${V4_FAST}
+      - V4_SLOW=${V4_SLOW}
+      - V6_FAST=${V6_FAST}
+      - V6_SLOW=${V6_SLOW}
     stdin_open: true
     tty: true
 
-  testserver1:
+  server-v4-fast:
     build:
       context: ./TestServer
       dockerfile: Dockerfile
-    container_name: testserver1
+    container_name: server-v4-fast
     cap_add:
       - NET_ADMIN
     environment:
-      - CONTAINER_IP=${SERVER1_IP}
-      - DELAY=${DELAY1}
+      - CONTAINER_IP=${V4_FAST}
+      - DELAY=${V4_FAST_DELAY}
     networks:
       sockettest-network:
-        ipv4_address: ${SERVER1_IP}
+        ipv4_address: ${V4_FAST}
     stdin_open: true
     tty: true
 
-  testserver2:
+  server-v4-slow:
     build:
       context: ./TestServer
       dockerfile: Dockerfile
-    container_name: testserver2
+    container_name: server-v4-slow
     cap_add:
       - NET_ADMIN
     environment:
-      - CONTAINER_IP=${SERVER2_IP}
-      - DELAY=${DELAY2}
+      - CONTAINER_IP=${V4_SLOW}
+      - DELAY=${V4_SLOW_DELAY}
     networks:
       sockettest-network:
-        ipv4_address: ${SERVER2_IP}
+        ipv4_address: ${V4_SLOW}
     stdin_open: true
     tty: true
 
-  testserver3:
+  server-v6-fast:
     build:
       context: ./TestServer
       dockerfile: Dockerfile
-    container_name: testserver3
+    container_name: server-v6-fast
     cap_add:
       - NET_ADMIN
     environment:
-      - CONTAINER_IP=${SERVER3_IP}
-      - DELAY=${DELAY3}
+      - CONTAINER_IP=${V6_FAST}
+      - DELAY=${V6_FAST_DELAY}
     networks:
       sockettest-network:
-        ipv6_address: ${SERVER3_IP}
+        ipv6_address: ${V6_FAST}
     stdin_open: true
     tty: true
 
-  testserver4:
+  server-v6-slow:
     build:
       context: ./TestServer
       dockerfile: Dockerfile
-    container_name: testserver4
+    container_name: server-v6-slow
     cap_add:
       - NET_ADMIN
     environment:
-      - CONTAINER_IP=${SERVER4_IP}
-      - DELAY=${DELAY4}
+      - CONTAINER_IP=${V6_SLOW}
+      - DELAY=${V6_SLOW_DELAY}
     networks:
       sockettest-network:
-        ipv6_address: ${SERVER4_IP}
+        ipv6_address: ${V6_SLOW}
     stdin_open: true
     tty: true
 
