@@ -10,7 +10,7 @@ echo "Microsoft.NETCore.App contents:"
 ls -la /usr/share/dotnet/shared/Microsoft.NETCore.App/
 
 # Use C# to generate the Corefile from environment variables and alter /etc/resolv.conf
-/usr/share/dotnet/dotnet run -c Release --no-build -- init
+/usr/share/dotnet/dotnet run -c Release --no-build
 
 echo "Starting CoreDNS..."
 /usr/local/bin/coredns -conf /etc/coredns/Corefile &
@@ -25,5 +25,6 @@ else
     exit 1
 fi
 
+# This will run the test cases in ConnectTests.cs
 /usr/share/dotnet/dotnet test -c Release --no-build
 # bash
