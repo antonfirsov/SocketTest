@@ -22,6 +22,8 @@ services:
       - V4_SLOW=${V4_SLOW}
       - V6_FAST=${V6_FAST}
       - V6_SLOW=${V6_SLOW}
+    volumes:
+      - ${TESTRUNTIME}:/testruntime
     stdin_open: true
     tty: true
 

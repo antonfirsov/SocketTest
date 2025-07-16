@@ -68,8 +68,6 @@ public class ConnectTests
         Task connectTask = socket.ConnectAsync(new IPEndPoint(address, Port), cts.Token).AsTask();
         cts.CancelAfter(50);
         await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await connectTask);
-        stopwatch.Stop();
-        Console.WriteLine($"ConnectAsync with {ipName} cancelled after {stopwatch.ElapsedMilliseconds} ms");
         Assert.True(stopwatch.ElapsedMilliseconds < 100, "Connect should complete quickly after cancellation");
     }
 
