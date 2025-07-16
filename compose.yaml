@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  testclient:
+    build:
+      context: ./TestClient
+      dockerfile: Dockerfile
+    container_name: testclient
+    networks:
+      - sockettest-network
+    depends_on:
+      - testserver1
+      - testserver2
+      - testserver3
+      - testserver4
+    stdin_open: true
+    tty: true
+
+  testserver1:
+    build:
+      context: ./TestServer
+      dockerfile: Dockerfile
+    container_name: testserver1
+    environment:
+      - CONTAINER_IP=172.20.0.10
+    ports:
+      - "5001:5000"
+    networks:
+      sockettest-network:
+        ipv4_address: 172.20.0.10
+    stdin_open: true
+    tty: true
+
+  testserver2:
+    build:
+      context: ./TestServer
+      dockerfile: Dockerfile
+    container_name: testserver2
+    environment:
+      - CONTAINER_IP=172.20.0.11
+    ports:
+      - "5002:5000"
+    networks:
+      sockettest-network:
+        ipv4_address: 172.20.0.11
+    stdin_open: true
+    tty: true
+
+  testserver3:
+    build:
+      context: ./TestServer
+      dockerfile: Dockerfile
+    container_name: testserver3
+    environment:
+      - CONTAINER_IP=2001:db8:1::10
+    ports:
+      - "5003:5000"
+    networks:
+      sockettest-network:
+        ipv6_address: 2001:db8:1::10
+    stdin_open: true
+    tty: true
+
+  testserver4:
+    build:
+      context: ./TestServer
+      dockerfile: Dockerfile
+    container_name: testserver4
+    environment:
+      - CONTAINER_IP=2001:db8:1::11
+    ports:
+      - "5004:5000"
+    networks:
+      sockettest-network:
+        ipv6_address: 2001:db8:1::11
+    stdin_open: true
+    tty: true
+
+networks:
+  sockettest-network:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+        - subnet: 2001:db8:1::/64
+          gateway: 2001:db8:1::1
