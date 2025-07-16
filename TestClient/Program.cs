@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 await Task.Delay(1000); // Allow time for server to start
 
-IPAddress[] addresses = await Dns.GetHostAddressesAsync("address.test");
+IPAddress[] addresses = await Dns.GetHostAddressesAsync("host-a");
 foreach (IPAddress address in addresses)
 {
     Console.WriteLine($"Resolved address: {address}");

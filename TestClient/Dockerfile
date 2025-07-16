@@ -10,9 +10,7 @@ ENV DOTNET_ROOT=/usr/share/dotnet
 ENV PATH="${PATH}:/usr/share/dotnet"
 
 COPY --from=coredns /coredns /usr/local/bin/coredns
-RUN mkdir /etc/coredns
-COPY coredns/Corefile /etc/coredns/Corefile
-COPY coredns/address.test /etc/coredns/address.test
+COPY coredns/ /etc/coredns/
 
 WORKDIR /app
 COPY . .
