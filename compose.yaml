@@ -31,8 +31,6 @@ services:
     environment:
       - CONTAINER_IP=${SERVER1_IP}
       - DELAY=${DELAY1}
-    ports:
-      - "5001:5000"
     networks:
       sockettest-network:
         ipv4_address: ${SERVER1_IP}
@@ -49,8 +47,6 @@ services:
     environment:
       - CONTAINER_IP=${SERVER2_IP}
       - DELAY=${DELAY2}
-    ports:
-      - "5002:5000"
     networks:
       sockettest-network:
         ipv4_address: ${SERVER2_IP}
@@ -67,8 +63,6 @@ services:
     environment:
       - CONTAINER_IP=${SERVER3_IP}
       - DELAY=${DELAY3}
-    ports:
-      - "5003:5000"
     networks:
       sockettest-network:
         ipv6_address: ${SERVER3_IP}
@@ -85,8 +79,6 @@ services:
     environment:
       - CONTAINER_IP=${SERVER4_IP}
       - DELAY=${DELAY4}
-    ports:
-      - "5004:5000"
     networks:
       sockettest-network:
         ipv6_address: ${SERVER4_IP}

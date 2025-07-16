@@ -1,23 +1,70 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using Xunit;
+using System.Threading.Tasks;
+
+if (args.Length > 0 && args[0].ToLower() == "init")
+{
+    System.Console.WriteLine("Generating Corefile and updating resolv.conf...");
+
+    string corefileContent = $@"
+.:53 {{
+    hosts {{
+        {GetHosts("HOST_A", "HOST_B")}
+    }}
+    errors
+    log
+}}";
+
+    Directory.CreateDirectory("/etc/coredns");
+    File.WriteAllText("/etc/coredns/Corefile", corefileContent);
+    Console.WriteLine("Corefile generated at /etc/coredns/Corefile");
+
+    // Read original resolv.conf and prepend CoreDNS nameserver
+    string resolvConfOriginal = File.ReadAllText("/etc/resolv.conf");
+    string newContent = "nameserver 127.0.0.1" + Environment.NewLine + resolvConfOriginal;
+    File.WriteAllText("/etc/resolv.conf", newContent);
+    System.Console.WriteLine("Updated /etc/resolv.conf to use CoreDNS.");
+
+    return;
+    
+    static string GetHosts(params string[] hostVars)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (string hostVar in hostVars)
+        {
+            string host = hostVar.Replace("_", "-").ToLower();
+            foreach (string ipStr in Environment.GetEnvironmentVariable(hostVar).Split())
+            {
+                sb.AppendLine($"{ipStr} {host}");
+            }
+        }
+        return sb.ToString();
+    }
+}
+
+System.Console.WriteLine("Starting the client test");
 
 await Task.Delay(1000); // Allow time for server to start
 
-IPAddress[] addresses = await Dns.GetHostAddressesAsync("host-a");
-foreach (IPAddress address in addresses)
-{
-    Console.WriteLine($"Resolved address: {address}");
-}
 
-const int Port = 5000;
-string[] addressStrings = ["172.20.0.10", "172.20.0.11", "2001:db8:1::10", "2001:db8:1::11"];
-foreach (IPAddress a in addressStrings.Select(IPAddress.Parse))
+
+public class ConnectTests
 {
-    Socket socket = new Socket(a.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-    IPEndPoint endpoint = new IPEndPoint(a, Port);
-    System.Console.WriteLine($"Connecting to {endpoint}...");
-    Stopwatch sw = Stopwatch.StartNew();
-    await socket.ConnectAsync(endpoint);
-    System.Console.WriteLine($"Connected to {endpoint} in {sw.ElapsedMilliseconds} ms");
+    const int Port = 5000;
+
+    [Fact]
+    public async Task BasicConnect()
+    {
+        using Socket socketA = new Socket(SocketType.Stream, ProtocolType.Tcp);
+        await socketA.ConnectAsync(new DnsEndPoint("host-a", Port));
+        Console.WriteLine($"socketA (host-a) connected to {socketA.RemoteEndPoint}");
+
+        using Socket socketB = new Socket(SocketType.Stream, ProtocolType.Tcp);
+        await socketB.ConnectAsync(new DnsEndPoint("host-b", Port));
+        Console.WriteLine($"socketB (host-b) connected to {socketB.RemoteEndPoint}");
+    }
 }

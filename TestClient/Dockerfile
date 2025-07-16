@@ -10,7 +10,6 @@ ENV DOTNET_ROOT=/usr/share/dotnet
 ENV PATH="${PATH}:/usr/share/dotnet"
 
 COPY --from=coredns /coredns /usr/local/bin/coredns
-COPY coredns/ /etc/coredns/
 
 WORKDIR /app
 COPY . .
