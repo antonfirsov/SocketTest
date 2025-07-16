@@ -3,6 +3,7 @@ using System.Net.Sockets;
 
 IPAddress address = IPAddress.Parse(Environment.GetEnvironmentVariable("CONTAINER_IP"));
 const int Port = 5000;
+
 IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
 
 if (!host.AddressList.Contains(address))
@@ -16,7 +17,7 @@ using Socket socket1 = new Socket(address.AddressFamily, SocketType.Stream, Prot
 socket1.Bind(endpoint);
 socket1.Listen();
 
-Console.WriteLine($"Listening on {endpoint}...");
+Console.WriteLine($"Listening on {endpoint}, DELAY: {Environment.GetEnvironmentVariable("DELAY")} ms ...");
 
 while (true)
 {

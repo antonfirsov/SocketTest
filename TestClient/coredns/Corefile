@@ -1,0 +1,5 @@
+address.test:53 {
+    file /etc/coredns/address.test
+    errors
+    log
+}

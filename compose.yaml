@@ -6,6 +6,8 @@ services:
       context: ./TestClient
       dockerfile: Dockerfile
     container_name: testclient
+    cap_add:
+      - NET_BIND_SERVICE
     networks:
       - sockettest-network
     depends_on:
@@ -13,6 +15,11 @@ services:
       - testserver2
       - testserver3
       - testserver4
+    environment:
+      - SERVER1_IP=${SERVER1_IP}
+      - SERVER2_IP=${SERVER2_IP}
+      - SERVER3_IP=${SERVER3_IP}
+      - SERVER4_IP=${SERVER4_IP}
     stdin_open: true
     tty: true
 
@@ -21,13 +28,16 @@ services:
       context: ./TestServer
       dockerfile: Dockerfile
     container_name: testserver1
+    cap_add:
+      - NET_ADMIN
     environment:
-      - CONTAINER_IP=172.20.0.10
+      - CONTAINER_IP=${SERVER1_IP}
+      - DELAY=${DELAY1}
     ports:
       - "5001:5000"
     networks:
       sockettest-network:
-        ipv4_address: 172.20.0.10
+        ipv4_address: ${SERVER1_IP}
     stdin_open: true
     tty: true
 
@@ -36,13 +46,16 @@ services:
       context: ./TestServer
       dockerfile: Dockerfile
     container_name: testserver2
+    cap_add:
+      - NET_ADMIN
     environment:
-      - CONTAINER_IP=172.20.0.11
+      - CONTAINER_IP=${SERVER2_IP}
+      - DELAY=${DELAY2}
     ports:
       - "5002:5000"
     networks:
       sockettest-network:
-        ipv4_address: 172.20.0.11
+        ipv4_address: ${SERVER2_IP}
     stdin_open: true
     tty: true
 
@@ -51,13 +64,16 @@ services:
       context: ./TestServer
       dockerfile: Dockerfile
     container_name: testserver3
+    cap_add:
+      - NET_ADMIN
     environment:
-      - CONTAINER_IP=2001:db8:1::10
+      - CONTAINER_IP=${SERVER3_IP}
+      - DELAY=${DELAY3}
     ports:
       - "5003:5000"
     networks:
       sockettest-network:
-        ipv6_address: 2001:db8:1::10
+        ipv6_address: ${SERVER3_IP}
     stdin_open: true
     tty: true
 
@@ -66,13 +82,16 @@ services:
       context: ./TestServer
       dockerfile: Dockerfile
     container_name: testserver4
+    cap_add:
+      - NET_ADMIN
     environment:
-      - CONTAINER_IP=2001:db8:1::11
+      - CONTAINER_IP=${SERVER4_IP}
+      - DELAY=${DELAY4}
     ports:
       - "5004:5000"
     networks:
       sockettest-network:
-        ipv6_address: 2001:db8:1::11
+        ipv6_address: ${SERVER4_IP}
     stdin_open: true
     tty: true
 
@@ -82,7 +101,7 @@ networks:
     enable_ipv6: true
     ipam:
       config:
-        - subnet: 172.20.0.0/16
-          gateway: 172.20.0.1
-        - subnet: 2001:db8:1::/64
-          gateway: 2001:db8:1::1
+        - subnet: ${IPV4_SUBNET}
+          gateway: ${IPV4_GATEWAY}
+        - subnet: ${IPV6_SUBNET}
+          gateway: ${IPV6_GATEWAY}

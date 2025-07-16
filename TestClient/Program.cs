@@ -4,6 +4,12 @@ using System.Diagnostics;
 
 await Task.Delay(1000); // Allow time for server to start
 
+IPAddress[] addresses = await Dns.GetHostAddressesAsync("address.test");
+foreach (IPAddress address in addresses)
+{
+    Console.WriteLine($"Resolved address: {address}");
+}
+
 const int Port = 5000;
 string[] addressStrings = ["172.20.0.10", "172.20.0.11", "2001:db8:1::10", "2001:db8:1::11"];
 foreach (IPAddress a in addressStrings.Select(IPAddress.Parse))
