@@ -6,12 +6,13 @@ System.Console.WriteLine("Generating Corefile and updating resolv.conf...");
 string corefileContent = $@"
 .:53 {{
     hosts {{
-        {GetHosts("HOST_A", "HOST_B")}
+{GetHosts()}
     }}
     errors
-    log
+    # log
 }}";
 
+System.Console.WriteLine($"Corefile:\n{corefileContent}");
 Directory.CreateDirectory("/etc/coredns");
 File.WriteAllText("/etc/coredns/Corefile", corefileContent);
 Console.WriteLine("Corefile generated at /etc/coredns/Corefile");
@@ -22,16 +23,18 @@ string newContent = "nameserver 127.0.0.1" + Environment.NewLine + resolvConfOri
 File.WriteAllText("/etc/resolv.conf", newContent);
 System.Console.WriteLine("Updated /etc/resolv.conf to use CoreDNS.");
 
-static string GetHosts(params string[] hostVars)
+static string GetHosts()
 {
+    var hostVars = Environment.GetEnvironmentVariables().Cast<System.Collections.DictionaryEntry>().Where(e => e.Key.ToString().StartsWith("HOST_"));
     StringBuilder sb = new StringBuilder();
-    foreach (string hostVar in hostVars)
+    foreach (System.Collections.DictionaryEntry hostVar in hostVars)
     {
-        string host = hostVar.Replace("_", "-").ToLower();
-        foreach (string ipStr in Environment.GetEnvironmentVariable(hostVar).Split())
+        string host = hostVar.Key.ToString().Replace("_", "-").ToLower();
+        foreach (string ipStr in hostVar.Value.ToString().Split())
         {
-            sb.AppendLine($"{ipStr} {host}");
+            sb.AppendLine($"        {ipStr} {host}");
         }
+        sb.AppendLine();
     }
     return sb.ToString();
 }
