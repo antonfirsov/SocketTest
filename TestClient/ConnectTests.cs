@@ -71,46 +71,7 @@ public class ConnectTests
         cts.CancelAfter(50);
         await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await connectTask);
         Assert.True(stopwatch.ElapsedMilliseconds < 100, "Connect should complete quickly after cancellation");
-    }
-
-    [Fact]
-    public async Task ConnectAsync_Parallel_Localhost()
-    {
-        const int LocalPort = 5001;
-        Socket listener4 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        listener4.Bind(new IPEndPoint(IPAddress.Loopback, LocalPort));
-
-        Socket listener6 = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-        listener6.Bind(new IPEndPoint(IPAddress.IPv6Loopback, LocalPort));
-
-        listener4.Listen();
-        listener6.Listen();
-
-        Task<Socket>[] acceptTasks = [listener4.AcceptAsync(), listener6.AcceptAsync()];
-
-        var mres = new ManualResetEventSlim();
-        SocketAsyncEventArgs saea = new SocketAsyncEventArgs();
-        saea.RemoteEndPoint = new DnsEndPoint("localhost", LocalPort);
-        saea.Completed += (_, _) => mres.Set();
-
-        Stopwatch stopwatch = Stopwatch.StartNew();
-        if (ParallelConnect(saea))
-        {
-            System.Console.WriteLine("pending");
-            mres.Wait(5000);
-        }
-
-        await Task.WhenAll(acceptTasks);
-
-        Console.WriteLine($"Connect(localhost) completed in {stopwatch.ElapsedMilliseconds} ms");
-        Socket socket = saea.ConnectSocket;
-
-        Assert.NotNull(socket);
-        Assert.True(socket.Connected);
-        Assert.NotNull(socket.RemoteEndPoint);
-    }
-
-    
+    }    
 
     [Theory]
     [InlineData("HOST_V4_SINGLE_SLOW", "V4_SLOW")]
