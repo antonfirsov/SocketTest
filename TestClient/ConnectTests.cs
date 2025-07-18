@@ -92,7 +92,7 @@ public class ConnectTests
 
     [Theory]
     [InlineData("HOST_V4_SINGLE_SLOW", "V4_SLOW")]
-    // [InlineData("HOST_V6_SINGLE_SLOW", "V6_SLOW")]
+    [InlineData("HOST_V6_SINGLE_SLOW", "V6_SLOW")]
     [InlineData("HOST_V4_WINS1", "V4_FAST")]
     [InlineData("HOST_V4_WINS0", "V4_FAST")]
     [InlineData("HOST_V6_WINS0", "V6_FAST")]
