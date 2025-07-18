@@ -15,9 +15,4 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
-  <!-- <ItemGroup Condition="'$(BuildTests)' != 'True'">
-    <Compile Remove="ConnectTests.cs" />
-  </ItemGroup> -->
-
 </Project>
