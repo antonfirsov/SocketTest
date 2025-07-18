@@ -13,12 +13,8 @@ COPY --from=coredns /coredns /usr/local/bin/coredns
 
 WORKDIR /app
 COPY . .
-
 RUN dotnet build -c Release
 
-# Copy and make executable the startup script
-COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
-
 CMD ["/app/start.sh"]
 

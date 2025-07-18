@@ -3,11 +3,6 @@ using System.Text;
 
 System.Console.WriteLine("Generating Corefile and updating resolv.conf...");
 
-if (!Directory.Exists("/app/results"))
-{
-    throw new Exception("poop");
-}
-
 string corefileContent = $@"
 .:53 {{
     hosts {{

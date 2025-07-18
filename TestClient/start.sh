@@ -2,13 +2,6 @@
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-echo "Replacing .NET runtime with test runtime..."
-rm -rf /usr/share/dotnet/shared/Microsoft.NETCore.App/*
-ln -sf /testruntime /usr/share/dotnet/shared/Microsoft.NETCore.App/10.0.0
-
-echo "Microsoft.NETCore.App contents:"
-ls -la /usr/share/dotnet/shared/Microsoft.NETCore.App/
-
 # Use C# to generate the Corefile from environment variables and alter /etc/resolv.conf
 /usr/share/dotnet/dotnet run -c Release --no-build
 
@@ -25,6 +18,13 @@ else
     exit 1
 fi
 
+echo "Replacing .NET runtime with test runtime..."
+rm -rf /usr/share/dotnet/shared/Microsoft.NETCore.App/*
+ln -sf /testruntime /usr/share/dotnet/shared/Microsoft.NETCore.App/10.0.0
+
+echo "Microsoft.NETCore.App contents:"
+ls -la /usr/share/dotnet/shared/Microsoft.NETCore.App/
+
 # This will run the test cases in ConnectTests.cs
+echo "Running dotnet test..."
 /usr/share/dotnet/dotnet test -c Release --no-build
-# bash
